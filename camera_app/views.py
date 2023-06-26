@@ -1,11 +1,8 @@
 from django.shortcuts import redirect, render
 from django.views import View
-import os
-import base64
+import base64, datetime, os, glob
 from django.core.files.base import ContentFile
-import datetime
 from django.http import HttpResponse
-import os
 from django.urls import reverse
 
 class CameraView(View):
@@ -61,6 +58,24 @@ def photo_detail(request, filename):
     if os.path.exists(photo_path):
         with open(photo_path, 'rb') as f:
             image_data = f.read()
-        return HttpResponse(image_data, content_type='image/jpeg')
+        
+        return HttpResponse(image_data, content_type='image/png')
     else:
         return HttpResponse('Foto não encontrada.')
+
+def photo_gallery(request):
+    photo_paths = glob.glob('photos/*.png')  # Modifique o padrão de arquivo se necessário
+    photo_list = []
+
+    for photo_path in photo_paths:
+        filename = os.path.basename(photo_path)
+        photo_list.append({
+            'filename': filename,
+            'url': reverse('photo_detail', kwargs={'filename': filename})
+        })
+
+    context = {
+        'photo_list': photo_list
+    }
+
+    return render(request, 'camera_app/photo_gallery.html', context)

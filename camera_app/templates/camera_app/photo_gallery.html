@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Galeria de Fotos</title>
+</head>
+<body>
+    <h1>Galeria de Fotos</h1>
+
+    <ul>
+    {% for photo in photo_list %}
+        <li><a href="{{ photo.url }}">{{ photo.filename }}</a></li>
+    {% empty %}
+        <li>Nenhuma foto encontrada.</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>

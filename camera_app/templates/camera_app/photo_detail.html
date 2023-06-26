@@ -1,9 +1,12 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Foto</title>
 </head>
 <body>
-    <img src="{{ photo_url }}" alt="Foto">
+    <p><a href="{% url 'photo_gallery' %}">Voltar à galeria de fotos</a></p>
+    <img src="{{ image_url }}" alt="Foto">
+    <p>Nome do arquivo: {{ filename }}</p>
 </body>
 </html>
