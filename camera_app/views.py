@@ -4,6 +4,9 @@ import os
 import base64
 from django.core.files.base import ContentFile
 import datetime
+from django.http import HttpResponse
+import os
+from django.urls import reverse
 
 class CameraView(View):
     template_name = 'camera_app/camera.html'
@@ -13,8 +16,10 @@ class CameraView(View):
     
     def post(self, request):
         if 'confirm' in request.POST:
-            save_photo(request)
-
+            response = save_photo(request)
+            if response:
+                return response
+        # Redirecionar para a página da câmera
         return redirect('camera')
 
 def save_photo(request):
@@ -43,4 +48,19 @@ def save_photo(request):
             for chunk in photo.chunks():
                 f.write(chunk)
 
-    return redirect('camera')
+        # Redirecionar para a página de detalhes da foto
+        return redirect(reverse('photo_detail', kwargs={'filename': filename}))
+
+    # Se o método da requisição não for POST, retorne None
+    return None
+
+def photo_detail(request, filename):
+    photo_path = os.path.join('photos', filename)
+
+    # Verifica se o arquivo existe
+    if os.path.exists(photo_path):
+        with open(photo_path, 'rb') as f:
+            image_data = f.read()
+        return HttpResponse(image_data, content_type='image/jpeg')
+    else:
+        return HttpResponse('Foto não encontrada.')

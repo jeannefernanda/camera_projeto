@@ -16,11 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from camera_app.views import CameraView, save_photo
+from camera_app.views import CameraView, save_photo, photo_detail
 
 
 urlpatterns = [
     #path('admin/', admin.site.urls),
     path('', CameraView.as_view(), name='camera'),
     path('save-photo/', save_photo, name='save_photo'),
+    path('photo/<str:filename>/', photo_detail, name='photo_detail'),
 ]
