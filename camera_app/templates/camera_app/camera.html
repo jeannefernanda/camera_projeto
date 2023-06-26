@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Câmera</title>
+</head>
+<body>
+    <video id="video" width="640" height="480" autoplay></video>
+    <button id="capture-button">Tirar Foto</button>
+    <img id="photo" src="" alt="Foto" style="display: none;">
+    <br><br>
+    <form method="post">
+        {% csrf_token %}
+        <input id="photo-input" type="hidden" name="photo" value="">
+        <button type="submit" name="confirm">Salvar Foto</button>
+    </form>
+
+    <script>
+        const video = document.getElementById('video');
+        const captureButton = document.getElementById('capture-button');
+        const photo = document.getElementById('photo');
+        const photoInput = document.getElementById('photo-input');
+        const constraints = {
+            video: true,
+        };
+
+        // Acessar a câmera
+        navigator.mediaDevices.getUserMedia(constraints)
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+        // Tirar foto
+        captureButton.addEventListener('click', () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataURL = canvas.toDataURL();
+            photo.setAttribute('src', dataURL);
+            photo.style.display = 'block';
+            photoInput.value = dataURL;
+        });
+    </script>
+</body>
+
+</html>
